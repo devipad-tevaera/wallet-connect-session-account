@@ -26,6 +26,12 @@ const metadata = {
 const ethersConfig = defaultConfig({
   /*Required*/
   metadata,
+  auth: {
+    email: true, // default to true
+    socials: ['google'],
+    showWallets: true, // default to true
+    walletFeatures: true // default to true
+  },
 
   /*Optional*/
   enableEIP6963: true, // true by default
@@ -40,7 +46,8 @@ createWeb3Modal({
   ethersConfig,
   chains: [zkSyncSepolia],
   projectId,
-  enableAnalytics: true // Optional - defaults to your Cloud configuration
+  enableAnalytics: true, // Optional - defaults to your Cloud configuration
+  
 })
 
 export default function App() {

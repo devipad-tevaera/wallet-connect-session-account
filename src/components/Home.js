@@ -2,7 +2,8 @@ import {
   useWeb3ModalProvider,
   useWeb3ModalAccount,
 } from "@web3modal/ethers/react";
-import { BrowserProvider, Contract, formatUnits, parseUnits } from "ethers";
+import {  Contract, formatUnits, parseUnits } from "ethers";
+import {BrowserProvider} from "zksync-ethers"
 import { useState } from "react";
 
 const USDTAddress = "0xCa69ddD4B29CcEF0af4bF7a3d80caa70741255d6";
@@ -24,16 +25,24 @@ const Home = () => {
   const [walletAddress, setWalletAddress] = useState()
 
   async function getBalance() {
-    if (!isConnected) throw Error("User disconnected");
+    try {
+      if (!isConnected) throw Error("User disconnected");
+  
+      const ethersProvider = new BrowserProvider(walletProvider);
+      console.log(ethersProvider,"provider");
+      const signer = await ethersProvider.getSigner();
+      console.log(signer, "signer", address);
 
-    const ethersProvider = new BrowserProvider(walletProvider);
-    const signer = await ethersProvider.getSigner();
     // The Contract object
     const USDTContract = new Contract(USDTAddress, USDTAbi, signer);
-    const USDTBalance = await USDTContract.balanceOf(address);
-
-    console.log(formatUnits(USDTBalance, 18));
-    setBalance(Number(formatUnits(USDTBalance, 18)))
+      const USDTBalance = await USDTContract.balanceOf(address);
+      console.log(USDTBalance,"check");
+  
+      console.log(formatUnits(USDTBalance, 18));
+      setBalance(Number(formatUnits(USDTBalance, 18)))
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async function transferTokens(e){
@@ -43,6 +52,7 @@ const Home = () => {
 
     const ethersProvider = new BrowserProvider(walletProvider);
     const signer = await ethersProvider.getSigner();
+    
     // The Contract object
     const USDTContract = new Contract(USDTAddress, USDTAbi, signer);
 
